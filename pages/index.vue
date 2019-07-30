@@ -18,23 +18,19 @@
         <!-- tab栏 -->
         <el-row type="flex" class="search-tab">
           <span
-            v-for="(item, index) in options"
+            v-for="(item,index) in options"
             :key="index"
-            :class="{active: index === currentOption}"
-            @click="handleOption(index)"
+            :class="{ active: current == index  }"
+            @click="handleClick(index)"
           >
-            <i>{{item.name}}</i>
+            <i>{{item.title}}</i>
           </span>
         </el-row>
 
         <!-- 输入框 -->
         <el-row type="flex" align="middle" class="search-input">
-          <input
-            :placeholder="options[currentOption].placeholder"
-            v-model="searchValue"
-            @keyup.enter="handleSearch"
-          />
-          <i class="el-icon-search" @click="handleSearch"></i>
+          <input :placeholder=" options[current].placeholder " />
+          <i class="el-icon-search"></i>
         </el-row>
       </div>
     </div>
@@ -46,57 +42,47 @@ export default {
   data() {
     return {
       // 轮播图数据
-      banners: [
-        {
-          url: "http://157.122.54.189:9095/assets/images/th03.jfif"
-        },
-        {
-          url: "http://157.122.54.189:9095/assets/images/th04.jfif"
-        }
-      ],
+      banners: [],
       options: [
         // 搜索框tab选项
         {
-          name: "攻略",
-          placeholder: "搜索城市",
-          pageUrl: "/post?city="
+          title: "攻略",
+          placeholder: "请输入城市"
         },
         {
-          name: "酒店",
-          placeholder: "请输入城市搜索酒店",
-          pageUrl: "/hotel?city="
+          title: "酒店",
+          placeholder: "请输入城市搜索酒店"
         },
         {
-          name: "机票",
-          placeholder: "请输入出发地",
-          pageUrl: "/air"
+          title: "机票",
+          placeholder: ""
         }
       ],
-      searchValue: "", // 搜索框的值
-      currentOption: 0 // 当前选中的选项
+      current: 0
     };
   },
   mounted() {
+    // 请求是路径是3000，为了拿到1337
+    // console.log(this.$axios.defaults)
     this.$axios({
       url: "/scenics/banners"
     }).then(res => {
       const { data } = res.data;
+      // const data = res.data.data
       this.banners = data;
+      // this.banners = data;
+      // console.log(res)
     });
   },
   methods: {
-    handleOption(index) {
-      // 设置当前tab
-      this.currentOption = index;
-      // 如果切换的机票tab，那么直接跳转到机票首页
-      const item = this.options[index];
-      if(item.name==="机票"){
-        return this.$router.push(item.pageUrl)
+    // 把index的值赋给current
+    handleClick(index) {
+      // 点击机票
+      if (index === 2) {
+        this.$router.push("/air");
       }
-    },
-    handleSearch() {
-      const item = this.options[this.currentOption];
-      this.$router.push(item.pageUrl+this.searchValue)
+
+      this.current = index;
     }
   }
 };
@@ -108,6 +94,7 @@ export default {
   margin: 0 auto;
   position: relative;
 
+  // 如果要修改第三方组件的class，使用/deep/标识让该class忽略scoped
   /deep/ .el-carousel__container {
     height: 700px;
   }
