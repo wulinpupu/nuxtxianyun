@@ -64,6 +64,7 @@ export default {
   mounted() {
     // 请求是路径是3000，为了拿到1337
     // console.log(this.$axios.defaults)
+    // this指向的是vue实例
     this.$axios({
       url: "/scenics/banners"
     }).then(res => {
