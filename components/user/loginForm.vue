@@ -47,20 +47,28 @@ export default {
   methods: {
     handleLoginSubmit() {
       // 验证表单
-      this.$refs.form.validate(valid =>{
+      this.$refs.form.validate(valid => {
         //   console.log(valid)
 
-          if(valid){
-            //登录接口
-            this.$axios({
-                url:"/accounts/login",
-                method:"POST",
-                data:this.form
-            }).then(res=>{
-                console.log(res.data)
-            })
-          }
-      })
+        if (valid) {
+          //登录接口
+          this.$axios({
+            url: "/accounts/login",
+            method: "POST",
+            data: this.form
+          }).then(res => {
+            // 保存到store, 要使用mutations的方法
+            // this.$store.state.user.userInfo = res.data
+
+            // mutations下的方法都必须使用commit来调用
+            // 第一个参数是调用的方法名，第二个参数就是数据
+            this.$store.commit("user/setUserInfo", res.data);
+
+            // 跳转到首页
+            this.$router.push("/");
+          });
+        }
+      });
     }
   }
 };
